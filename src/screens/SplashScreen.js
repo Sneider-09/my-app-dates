@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
+import { DefaultTheme, useNavigation } from "@react-navigation/native";
+import CustomTheme from "../constants/CustomTheme";
 
-export const SplashScreen = ({ navigation }) => {
+export const SplashScreen = ({}) => {
+  const navigation = useNavigation();
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace("Home");
+      navigation.replace("MainTabs");
     }, 3000);
     return () => clearTimeout(timer);
   }, [navigation]);
@@ -23,7 +26,7 @@ export const SplashScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F8FC",
+    backgroundColor: CustomTheme.colors.background,
     justifyContent: "center",
     alignItems: "center",
   },
