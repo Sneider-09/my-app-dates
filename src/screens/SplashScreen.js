@@ -7,18 +7,15 @@ export const SplashScreen = ({}) => {
   const navigation = useNavigation();
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace("MainTabs");
+      navigation.replace("Login");
     }, 3000);
     return () => clearTimeout(timer);
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text>Cargando...</Text>
-      <Image
-        source={require("../../assets/mariposa.png")}
-        style={styles.logo}
-      />
+      <Image source={require("../../assets/abejas.png")} style={styles.logo} />
+      <Text>¡Bzzz... casi terminamos!</Text>
     </View>
   );
 };

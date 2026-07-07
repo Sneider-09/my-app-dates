@@ -4,6 +4,7 @@ import HomeScreen from "../screens/HomeScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import UserScreen from "../screens/UserScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
 
@@ -41,6 +42,12 @@ const AppNavigator = () => {
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
         options={{ headerShown: false }}
       />
 
