@@ -15,7 +15,7 @@ export const SplashScreen = ({}) => {
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/abejas.png")} style={styles.logo} />
-      <Text>¡Bzzz... casi terminamos!</Text>
+      <Text style={styles.loader}>¡Bzzz... casi terminamos!</Text>
     </View>
   );
 };
@@ -23,7 +23,7 @@ export const SplashScreen = ({}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CustomTheme.colors.background,
+    backgroundColor: CustomTheme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 29,
+    color: CustomTheme.colors.background,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

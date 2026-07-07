@@ -8,18 +8,36 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../services/FireBaseConfig";
 import colors from "../../constants/colors";
 
-const LoginScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [photoProfile, setPhotoProfile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [erroMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
-    navigation.replace("MainTabs");
+  const handleRegister = () => {
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (useCredential) => {
+        const user = useCredential.user;
+        updateProfile(user, {
+          displayName: name,
+        })
+          .then(() => {
+            console.log("Usuario registrado con nombre", user.displayName);
+            navigation.navigate("Login", { screen: "LoginScreen" });
+          })
+          .catch(() => {
+            setError(true);
+            setErrorMessage(error.message);
+          });
+      },
+    );
   };
 
   return (
@@ -31,7 +49,17 @@ const LoginScreen = ({ navigation }) => {
         />
 
         <Text style={styles.title}>Su historia comienza aquí</Text>
-        <Text style={styles.subtitle}>Inicia Sesión</Text>
+        <Text style={styles.subtitle}>Crear Cuenta</Text>
+
+        <View style={styles.inputContainer}>
+          <Icon name="account-outline" size={24} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre Completo"
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
 
         <View style={styles.inputContainer}>
           <Icon name="email-outline" size={24} style={styles.icon} />
@@ -54,15 +82,18 @@ const LoginScreen = ({ navigation }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+        <TouchableOpacity
+          style={styles.registerButton}
+          onPress={handleRegister}
+        >
+          <Text style={styles.registerButtonText}>Registrarme</Text>
         </TouchableOpacity>
 
         <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>¿Aún no tienes una cuenta?</Text>
+          <Text style={styles.registerText}>¿Ya tienes una cuenta?</Text>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={styles.registerLink}>Crea una cuenta</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.registerLink}>Inicia Sesión</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -139,7 +170,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 20,
   },
-  loginButton: {
+  registerButton: {
     backgroundColor: colors.primary,
     height: 52,
     borderRadius: 30,
@@ -148,7 +179,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
   },
-  loginButtonText: {
+  registerButtonText: {
     color: colors.background,
     fontSize: 16,
     fontWeight: "bold",
@@ -175,4 +206,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
