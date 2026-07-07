@@ -6,6 +6,7 @@ const CustomTheme = {
   colors: {
     ...DefaultTheme.colors,
     background: colors.background,
+    primary: colors.primary,
     card: colors.surface,
     text: colors.text_primary,
     border: colors.border,

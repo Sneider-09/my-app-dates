@@ -7,6 +7,7 @@ import UserScreen from "../screens/UserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
+import RegisterScreen from "../screens/auth/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +49,12 @@ const AppNavigator = () => {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
         options={{ headerShown: false }}
       />
 
