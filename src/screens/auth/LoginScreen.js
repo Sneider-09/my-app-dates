@@ -19,7 +19,18 @@ const LoginScreen = ({ navigation }) => {
   const [erroMessage, setErrorMessage] = useState("");
 
   const handleLogin = () => {
-    navigation.replace("MainTabs");
+    signInWithEmailAndPassword(auth, email, password)
+      .then((useCredential) => {
+        console.log("Usuario logueado: ", useCredential.user);
+        setError(false);
+        setErrorMessage("");
+        navigation.replace("MainTabs");
+      })
+      .catch((error) => {
+        setError(true);
+        setErrorMessage(error.message);
+        console.log("Error al iniciar sesión", error.message);
+      });
   };
 
   return (
@@ -53,6 +64,8 @@ const LoginScreen = ({ navigation }) => {
             onChangeText={setPassword}
           />
         </View>
+
+        {error && <Text style={styles.errorMessage}>{erroMessage}</Text>}
 
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
