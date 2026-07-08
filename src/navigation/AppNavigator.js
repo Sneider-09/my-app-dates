@@ -9,15 +9,36 @@ import { Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import RegisterScreen from "../screens/auth/RegisterScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import { Image } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const { user } = useAuth();
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        headerRight: () => (
+          <Image
+            source={require("../../assets/abejas.png")}
+            style={{
+              width: 32,
+              height: 32,
+              marginRight: 15,
+              resizeMode: "contain",
+            }}
+          />
+        ),
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTintColor: colors.surface,
+        headerShadowVisible: true,
+
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Home") {
@@ -27,20 +48,62 @@ const TabNavigator = () => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: colors.secondary,
-        tabBarInactiveTintColor: colors.secondary,
-        tabBarStyle: { backgroundColor: colors.primary },
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.accent,
+        tabBarStyle: {
+          backgroundColor: colors.primary,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{}}></Tab.Screen>
-      <Tab.Screen name="User" component={UserScreen} options={{}}></Tab.Screen>
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerTitle: "Elytra",
+          title: "Inicio",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="User"
+        component={UserScreen}
+        options={{
+          headerTitle: `Bienvenido a Elytra, ${user?.displayName || ""}`,
+          title: "Perfil",
+        }}
+      ></Tab.Screen>
     </Tab.Navigator>
   );
 };
 
 const AppNavigator = () => {
+  const { user } = useAuth();
   return (
-    <Stack.Navigator initialRouteName="Splash">
+    <Stack.Navigator
+      initialRouteName="Splash"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTintColor: colors.surface,
+        headerTitleAlign: "left",
+        headerShadowVisible: true,
+        headerRight: () => (
+          <Image
+            source={require("../../assets/abejas.png")}
+            style={{
+              width: 32,
+              height: 32,
+              marginRight: 15,
+              resizeMode: "contain",
+            }}
+          />
+        ),
+      }}
+    >
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
@@ -62,7 +125,7 @@ const AppNavigator = () => {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true, title: "Ajustes" }}
       />
 
       <Stack.Screen

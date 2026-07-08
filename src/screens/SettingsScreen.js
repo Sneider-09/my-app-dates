@@ -4,11 +4,10 @@ import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }) => {
   const { user } = useAuth();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ajustes</Text>
       <Text style={styles.subtitle}>Sobre tu Cuenta</Text>
       <View style={styles.row}>
         <View style={styles.info}>
@@ -63,17 +62,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 40,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.text_primary,
-    textAlign: "center",
-    marginBottom: 8,
-  },
   subtitle: {
     fontSize: 16,
-    color: colors.text_secondary,
-    textAlign: "center",
+    color: colors.text_primary,
+    textAlign: "left",
+    fontWeight: "bold",
     marginBottom: 30,
   },
   row: {

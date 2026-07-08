@@ -19,9 +19,6 @@ const UserScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Bienvenido, {user?.displayName || "Nombre de Usuario"}
-      </Text>
       <TouchableOpacity
         style={styles.containerOption}
         onPress={() => navigation.navigate("Settings")}
