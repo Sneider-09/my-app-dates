@@ -1,11 +1,14 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import colors from "../constants/colors";
+import { useAuth } from "../context/AuthContext";
 
 const HomeScreen = () => {
+  const { user } = useAuth();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home</Text>
+      <Text style={styles.text}>{user?.displayName || "Usuario"}</Text>
     </View>
   );
 };
