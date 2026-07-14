@@ -1,24 +1,54 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/FireBaseConfig";
 import colors from "../constants/colors";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { showSuccess, showError } from "../constants/flashMessage";
 
 const UserScreen = ({ navigation }) => {
   const { user } = useAuth();
+  const [isLogOutModalVisible, setLogOutModalVisible] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
+  const defaultImage = require("../../assets/abejas.png");
 
-  const handleLogOut = () => {
-    signOut(auth)
-      .then(() => {
-        navigation.replace("Login");
-      })
-      .catch((error) => Alert.alert("Error", "No se puede cerrar la sesión"));
+  useEffect(() => {
+    setImageUri(user?.photoURL || null);
+  }, [user]);
+
+  const handleLogOut = async () => {
+    try {
+      await signOut(auth);
+      showSuccess("¡Listo!", "Tu sesión se ha cerrado correctamente");
+      setLogOutModalVisible(false);
+      navigation.navigate("Login");
+    } catch (error) {
+      showError("¡Upps!", error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.profileContainer}>
+        <Image
+          source={
+            imageUri ? { uri: imageUri } : require("../../assets/abejas.png")
+          }
+          style={styles.profileImage}
+        />
+        <Text style={styles.profileName}>
+          {user?.displayName || "Usuario en Sesión"}
+        </Text>
+      </View>
+
       <TouchableOpacity
         style={styles.containerOption}
         onPress={() => navigation.navigate("Settings")}
@@ -84,6 +114,40 @@ const styles = StyleSheet.create({
   icon: {
     color: colors.text_primary,
     marginRight: 15,
+  },
+
+  profileContainer: {
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 35,
+  },
+
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+
+    borderWidth: 3,
+    borderColor: colors.primary,
+
+    backgroundColor: colors.surface,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+
+  profileName: {
+    marginTop: 16,
+    fontSize: 24,
+    fontWeight: "700",
+    color: colors.text_primary,
+    textAlign: "center",
   },
 });
 

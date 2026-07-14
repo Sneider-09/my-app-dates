@@ -12,14 +12,8 @@ import { auth } from "../services/FireBaseConfig";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import colors from "../constants/colors";
 import EditModal from "../components/EditModal";
-import { showMessage } from "react-native-flash-message";
 import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
-import {
-  showSuccess,
-  showInfo,
-  showWarning,
-  showError,
-} from "../constants/flashMessage";
+import { showSuccess, showError } from "../constants/flashMessage";
 
 const SettingsScreen = ({}) => {
   const { user } = useAuth();
@@ -54,35 +48,6 @@ const SettingsScreen = ({}) => {
     try {
       if (modalTitle === "Nombre") {
         await updateProfile(auth.currentUser, { displayName: fieldValue });
-        /*showMessage({
-          message: "¡Listo!",
-          description: "Nombre actualizado correctamente",
-          type: "success",
-          icon: "success",
-          duration: 2500,
-
-          floating: true,
-
-          style: {
-            borderRadius: 15,
-            marginHorizontal: 16,
-            marginTop: 50,
-            paddingVertical: 14,
-            backgroundColor: colors.success,
-          },
-
-          titleStyle: {
-            fontSize: 16,
-            fontWeight: "700",
-            color: colors.surface,
-          },
-
-          textStyle: {
-            fontSize: 14,
-            color: colors.surface,
-          },
-        }); */
-
         showSuccess("¡Listo!", "Nombre actualizado correctamente");
       } else if (modalTitle === "Correo") {
         await updateEmail(auth.currentUser, fieldValue);
@@ -92,7 +57,7 @@ const SettingsScreen = ({}) => {
         showSuccess("¡Listo!", "Contraseña actualizada correctamente");
       }
     } catch (error) {
-      showSuccess("¡Upps!", error.message);
+      showError("¡Upps!", error.message);
     } finally {
       setModalVisible(false);
     }
