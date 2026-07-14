@@ -1,11 +1,103 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import colors from "../constants/colors";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { useAuth } from "../context/AuthContext";
+import { auth } from "../services/FireBaseConfig";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import colors from "../constants/colors";
+import EditModal from "../components/EditModal";
+import { showMessage } from "react-native-flash-message";
+import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
+import {
+  showSuccess,
+  showInfo,
+  showWarning,
+  showError,
+} from "../constants/flashMessage";
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({}) => {
   const { user } = useAuth();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [fieldValue, setFieldValue] = useState("");
+
+  //METODO ABRIR MODAL
+  const handleEdit = (field) => {
+    setModalTitle(field);
+    switch (field) {
+      case "Nombre":
+        setFieldValue(user?.displayName || "");
+        break;
+
+      case "Correo":
+        setFieldValue(user?.email || "");
+        break;
+
+      case "Contraseña":
+        setFieldValue("");
+        break;
+
+      default:
+        setFieldValue("");
+    }
+    setModalVisible(true);
+  };
+
+  //METODO PARA GUARDAR
+  const handleSave = async () => {
+    try {
+      if (modalTitle === "Nombre") {
+        await updateProfile(auth.currentUser, { displayName: fieldValue });
+        /*showMessage({
+          message: "¡Listo!",
+          description: "Nombre actualizado correctamente",
+          type: "success",
+          icon: "success",
+          duration: 2500,
+
+          floating: true,
+
+          style: {
+            borderRadius: 15,
+            marginHorizontal: 16,
+            marginTop: 50,
+            paddingVertical: 14,
+            backgroundColor: colors.success,
+          },
+
+          titleStyle: {
+            fontSize: 16,
+            fontWeight: "700",
+            color: colors.surface,
+          },
+
+          textStyle: {
+            fontSize: 14,
+            color: colors.surface,
+          },
+        }); */
+
+        showSuccess("¡Listo!", "Nombre actualizado correctamente");
+      } else if (modalTitle === "Correo") {
+        await updateEmail(auth.currentUser, fieldValue);
+        showSuccess("¡Listo!", "Correo actualizado correctamente");
+      } else if (modalTitle === "Contraseña") {
+        await updatePassword(auth.currentUser, fieldValue);
+        showSuccess("¡Listo!", "Contraseña actualizada correctamente");
+      }
+    } catch (error) {
+      showSuccess("¡Upps!", error.message);
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>Sobre tu Cuenta</Text>
@@ -18,7 +110,7 @@ const SettingsScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate("EditName")}
+          onPress={() => handleEdit("Nombre")}
         >
           <Icon name="pencil-outline" size={20} style={styles.icon} />
         </TouchableOpacity>
@@ -33,7 +125,7 @@ const SettingsScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate("EditEmail")}
+          onPress={() => handleEdit("Correo")}
         >
           <Icon name="pencil-outline" size={20} style={styles.icon} />
         </TouchableOpacity>
@@ -42,15 +134,24 @@ const SettingsScreen = ({ navigation }) => {
       <View style={styles.row}>
         <View style={styles.info}>
           <Text style={styles.label}>Nueva Contraseña</Text>
-          <Text style={styles.infoText}>Cambiar contraseña</Text>
+          <Text style={styles.infoText}>********</Text>
         </View>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate("EditPassword")}
+          onPress={() => handleEdit("Contraseña")}
         >
           <Icon name="pencil-outline" size={20} style={styles.icon} />
         </TouchableOpacity>
       </View>
+
+      <EditModal
+        visible={isModalVisible}
+        title={modalTitle}
+        value={fieldValue}
+        onChangeText={setFieldValue}
+        onSave={handleSave}
+        onCancel={() => setModalVisible(false)}
+      />
     </View>
   );
 };
