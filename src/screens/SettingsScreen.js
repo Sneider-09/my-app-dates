@@ -1,25 +1,125 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../services/FireBaseConfig";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import colors from "../constants/colors";
 import EditModal from "../components/EditModal";
+import ModalImagePicker from "../components/ModalImagePicker";
+import * as ImagePicker from "expo-image-picker";
 import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
-import { showSuccess, showError } from "../constants/flashMessage";
+import { showSuccess, showError, showInfo } from "../constants/flashMessage";
+import * as FileSystem from "expo-file-system/legacy";
+
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/vwjzxmhu/image/upload";
+const UPLOAD_PRESET = "elytra";
 
 const SettingsScreen = ({}) => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [imageUri, setImageUri] = useState(null);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [fieldValue, setFieldValue] = useState("");
+
+  const [selectedAsset, setSelectedAsset] = useState(null);
+
+  useEffect(() => {
+    if (user?.photoURL) {
+      setImageUri(user.photoURL);
+    }
+  }, [user]);
+
+  // METODO PROCESAR IMAGENES
+  const handleChooseImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        showError(
+          "Permiso Denegado",
+          "Se necesita permiso para acceder a la galería",
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        showInfo("Cancelado", "No se ha seleccionado ninguna imagen");
+        return;
+      }
+
+      const asset = result.assets[0];
+
+      console.log(asset);
+
+      setSelectedAsset(asset);
+      setImageUri(asset.uri);
+    } catch (error) {
+      console.error("Error seleccionando la imagen:", error);
+      showError("Error", "Ocurrió un error al intentar seleccionar la imagen");
+    }
+  };
+
+  // METODO SUBIR IMAGEN
+  const uploadImage = async () => {
+    if (!user || !selectedAsset) {
+      showError("Error", "No hay una imagen seleccionada.");
+      return;
+    }
+
+    try {
+      const response = await FileSystem.uploadAsync(
+        CLOUDINARY_URL,
+        selectedAsset.uri,
+        {
+          fieldName: "file",
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          mimeType: selectedAsset.mimeType ?? "image/png",
+          parameters: {
+            upload_preset: UPLOAD_PRESET,
+          },
+        },
+      );
+
+      console.log("Status:", response.status);
+
+      const data = JSON.parse(response.body);
+
+      console.log("Cloudinary:", data);
+
+      if (!data.secure_url) {
+        throw new Error(
+          data.error?.message ?? "Cloudinary no devolvió la URL de la imagen.",
+        );
+      }
+
+      await updateProfile(auth.currentUser, {
+        photoURL: data.secure_url,
+      });
+
+      setUser({
+        ...user,
+        photoURL: data.secure_url,
+      });
+
+      setImageUri(data.secure_url);
+
+      showSuccess("¡Listo!", "Foto de perfil actualizada correctamente");
+    } catch (error) {
+      console.error(error);
+      showError("Error", error.message);
+    } finally {
+      setImageModalVisible(false);
+    }
+  };
 
   //METODO ABRIR MODAL
   const handleEdit = (field) => {
@@ -66,6 +166,25 @@ const SettingsScreen = ({}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>Sobre tu Cuenta</Text>
+
+      <View style={styles.row}>
+        <View style={styles.info}>
+          <Text style={styles.label}>Foto de Perfil</Text>
+          <Image
+            source={
+              imageUri ? { uri: imageUri } : require("../../assets/abejas.png")
+            }
+            style={styles.profileImage}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => setImageModalVisible(true)}
+        >
+          <Icon name="pencil-outline" size={20} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.row}>
         <View style={styles.info}>
           <Text style={styles.label}>Nombre</Text>
@@ -116,6 +235,16 @@ const SettingsScreen = ({}) => {
         onChangeText={setFieldValue}
         onSave={handleSave}
         onCancel={() => setModalVisible(false)}
+      />
+
+      <ModalImagePicker
+        visible={isImageModalVisible}
+        imageUri={imageUri}
+        onChooseImage={handleChooseImage}
+        onSave={uploadImage}
+        onCancel={() => {
+          setImageModalVisible(false);
+        }}
       />
     </View>
   );
@@ -176,6 +305,25 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: colors.primary,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 60,
+
+    borderWidth: 3,
+    borderColor: colors.primary,
+
+    backgroundColor: colors.surface,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
 });
 

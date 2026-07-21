@@ -1,6 +1,13 @@
-import { View } from "react-native-web";
+import React from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Modal,
+} from "react-native";
 import colors from "../constants/colors";
 
 const ModalImagePicker = ({
@@ -27,11 +34,7 @@ const ModalImagePicker = ({
             style={styles.profileImage}
           />
           <TouchableOpacity style={styles.editButton} onPress={onChooseImage}>
-            <Icon
-              name="pencil-image-edit-outline"
-              size={20}
-              style={styles.icon}
-            />
+            <Icon name="image-edit-outline" size={20} style={styles.icon} />
           </TouchableOpacity>
         </View>
         <View style={styles.modalButtons}>
@@ -160,3 +163,5 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
 });
+
+export default ModalImagePicker;
