@@ -11,8 +11,8 @@ import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
 import { showSuccess, showError, showInfo } from "../constants/flashMessage";
 import * as FileSystem from "expo-file-system/legacy";
 
-const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/vwjzxmhu/image/upload";
-const UPLOAD_PRESET = "elytra";
+const CLOUDINARY_URL = EXPO_PUBLIC_CLOUDINARY_URL;
+const UPLOAD_PRESET = EXPO_PUBLIC_UPLOAD_PRESET;
 
 const SettingsScreen = ({}) => {
   const { user, setUser } = useAuth();
