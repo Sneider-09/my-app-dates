@@ -11,8 +11,8 @@ import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/FireBaseConfig";
 import colors from "../constants/colors";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { showSuccess, showError } from "../constants/flashMessage";
+import { IconDoorExit, IconUserCog } from "@tabler/icons-react-native";
 
 const UserScreen = ({ navigation }) => {
   const { user } = useAuth();
@@ -53,11 +53,11 @@ const UserScreen = ({ navigation }) => {
         style={styles.containerOption}
         onPress={() => navigation.navigate("Settings")}
       >
-        <Icon name="account-cog-outline" size={24} style={styles.icon} />
+        <IconUserCog size={24} style={styles.icon} />
         <Text style={styles.option}>Ajustes</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.containerOption} onPress={handleLogOut}>
-        <Icon name="exit-to-app" size={24} style={styles.icon} />
+        <IconDoorExit size={24} style={styles.icon} />
         <Text style={styles.option}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    color: colors.text_primary,
+    color: colors.primary,
     marginRight: 15,
   },
 

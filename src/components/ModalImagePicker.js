@@ -1,5 +1,4 @@
 import React from "react";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   StyleSheet,
   View,
@@ -26,25 +25,29 @@ const ModalImagePicker = ({
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Cambiar Foto de Perfil</Text>
-          <Image
-            source={
-              imageUri ? { uri: imageUri } : require("../../assets/abejas.png")
-            }
-            style={styles.profileImage}
-          />
-          <TouchableOpacity style={styles.editButton} onPress={onChooseImage}>
-            <Icon name="image-edit-outline" size={20} style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.modalButtons}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-            <Text style={styles.cancelButtonText}>Cancelar</Text>
-          </TouchableOpacity>
+          <View style={styles.imageSection}>
+            <Image
+              source={
+                imageUri
+                  ? { uri: imageUri }
+                  : require("../../assets/abejas.png")
+              }
+              style={styles.profileImage}
+            />
 
-          <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-            <Text style={styles.saveButtonText}>Guardar</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={onChooseImage}>
+              <Text style={styles.editButtonText}>Cambiar foto</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.modalButtons}>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+              <Text style={styles.saveButtonText}>Guardar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
 
   modalButtons: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
     marginTop: 25,
   },
@@ -161,6 +164,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 6,
+  },
+  imageSection: {
+    alignItems: "center",
+    marginVertical: 25,
+  },
+
+  editButtonText: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.primary,
   },
 });
 

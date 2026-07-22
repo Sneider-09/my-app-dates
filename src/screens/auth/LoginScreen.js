@@ -7,10 +7,14 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/FireBaseConfig";
 import colors from "../../constants/colors";
+import {
+  IconMail,
+  IconPassword,
+  IconUserKey,
+} from "@tabler/icons-react-native";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -45,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.subtitle}>Inicia Sesión</Text>
 
         <View style={styles.inputContainer}>
-          <Icon name="email-outline" size={24} style={styles.icon} />
+          <IconMail size={24} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Correo Electrónico"
@@ -55,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Icon name="lock-outline" size={24} style={styles.icon} />
+          <IconPassword name="lock-outline" size={24} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Contraseña"
