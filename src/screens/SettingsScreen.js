@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../services/FireBaseConfig";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import colors from "../constants/colors";
 import EditModal from "../components/EditModal";
 import ModalImagePicker from "../components/ModalImagePicker";
@@ -10,9 +9,10 @@ import * as ImagePicker from "expo-image-picker";
 import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
 import { showSuccess, showError, showInfo } from "../constants/flashMessage";
 import * as FileSystem from "expo-file-system/legacy";
+import { IconEdit } from "@tabler/icons-react-native";
 
-const CLOUDINARY_URL = EXPO_PUBLIC_CLOUDINARY_URL;
-const UPLOAD_PRESET = EXPO_PUBLIC_UPLOAD_PRESET;
+const CLOUDINARY_URL = process.env.EXPO_PUBLIC_CLOUDINARY_URL;
+const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET;
 
 const SettingsScreen = ({}) => {
   const { user, setUser } = useAuth();
@@ -181,7 +181,7 @@ const SettingsScreen = ({}) => {
           style={styles.editButton}
           onPress={() => setImageModalVisible(true)}
         >
-          <Icon name="pencil-outline" size={20} style={styles.icon} />
+          <IconEdit size={24} style={styles.icon} />
         </TouchableOpacity>
       </View>
 
@@ -196,7 +196,7 @@ const SettingsScreen = ({}) => {
           style={styles.editButton}
           onPress={() => handleEdit("Nombre")}
         >
-          <Icon name="pencil-outline" size={20} style={styles.icon} />
+          <IconEdit size={24} style={styles.icon} />
         </TouchableOpacity>
       </View>
 
@@ -211,7 +211,7 @@ const SettingsScreen = ({}) => {
           style={styles.editButton}
           onPress={() => handleEdit("Correo")}
         >
-          <Icon name="pencil-outline" size={20} style={styles.icon} />
+          <IconEdit size={24} style={styles.icon} />
         </TouchableOpacity>
       </View>
 
@@ -224,7 +224,7 @@ const SettingsScreen = ({}) => {
           style={styles.editButton}
           onPress={() => handleEdit("Contraseña")}
         >
-          <Icon name="pencil-outline" size={20} style={styles.icon} />
+          <IconEdit size={24} style={styles.icon} />
         </TouchableOpacity>
       </View>
 

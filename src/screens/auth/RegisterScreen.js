@@ -7,10 +7,10 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../services/FireBaseConfig";
 import colors from "../../constants/colors";
+import { IconMail, IconPassword, IconUser } from "@tabler/icons-react-native";
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -52,7 +52,7 @@ const RegisterScreen = ({ navigation }) => {
         <Text style={styles.subtitle}>Crear Cuenta</Text>
 
         <View style={styles.inputContainer}>
-          <Icon name="account-outline" size={24} style={styles.icon} />
+          <IconUser size={24} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Nombre Completo"
@@ -62,7 +62,7 @@ const RegisterScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Icon name="email-outline" size={24} style={styles.icon} />
+          <IconMail size={24} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Correo Electrónico"
@@ -72,7 +72,7 @@ const RegisterScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Icon name="lock-outline" size={24} style={styles.icon} />
+          <IconPassword size={24} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Contraseña"

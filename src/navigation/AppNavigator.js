@@ -5,12 +5,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import UserScreen from "../screens/UserScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
-import { Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import RegisterScreen from "../screens/auth/RegisterScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import { Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import {
+  IconHome,
+  IconHomeFilled,
+  IconUser,
+  IconUserFilled,
+} from "@tabler/icons-react-native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,13 +45,20 @@ const TabNavigator = () => {
         headerShadowVisible: true,
 
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
           if (route.name === "Home") {
-            iconName = focused ? "home" : "home-outline";
+            return focused ? (
+              <IconHomeFilled size={size} color={color} />
+            ) : (
+              <IconHome size={size} color={color} />
+            );
           } else if (route.name === "User") {
-            iconName = focused ? "person" : "person-outline";
+            return focused ? (
+              <IconUserFilled size={size} color={color} />
+            ) : (
+              <IconUser size={size} color={color} />
+            );
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return;
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.accent,
@@ -54,7 +66,7 @@ const TabNavigator = () => {
           backgroundColor: colors.primary,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: "600",
         },
       })}
