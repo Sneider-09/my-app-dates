@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
-import { useAuth } from "../context/AuthContext";
-import { auth } from "../services/FireBaseConfig";
 import colors from "../constants/colors";
 import EditModal from "../components/EditModal";
 import ModalImagePicker from "../components/ModalImagePicker";
 import * as ImagePicker from "expo-image-picker";
-import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
 import { showSuccess, showError, showInfo } from "../constants/flashMessage";
 import * as FileSystem from "expo-file-system/legacy";
 import { IconEdit } from "@tabler/icons-react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { useAuth } from "../context/AuthContext";
+import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
+import { auth, db } from "../services/FireBaseConfig";
+import { doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
 const CLOUDINARY_URL = process.env.EXPO_PUBLIC_CLOUDINARY_URL;
 const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET;
@@ -22,13 +25,39 @@ const SettingsScreen = ({}) => {
   const [modalTitle, setModalTitle] = useState("");
   const [fieldValue, setFieldValue] = useState("");
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [birthdayDate, setBirthdayDate] = useState(new Date());
+
   const [selectedAsset, setSelectedAsset] = useState(null);
+
+  const userDoc = user ? doc(db, "users", user.uid) : null;
+  const [userDocData, setUserDocData] = useState(null);
 
   useEffect(() => {
     if (user?.photoURL) {
       setImageUri(user.photoURL);
     }
   }, [user]);
+
+  // METODO PARA OBTENER DATOS DEL USUARIO
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const uid = auth.currentUser?.uid;
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setUserDocData(userSnap.data());
+        } else {
+          console.log("El usuario no existe en Firestore");
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos del usuario:", error);
+      }
+    };
+    getUserData();
+  }, []);
 
   // METODO PROCESAR IMAGENES
   const handleChooseImage = async () => {
@@ -89,8 +118,6 @@ const SettingsScreen = ({}) => {
         },
       );
 
-      console.log("Status:", response.status);
-
       const data = JSON.parse(response.body);
 
       console.log("Cloudinary:", data);
@@ -103,6 +130,17 @@ const SettingsScreen = ({}) => {
 
       await updateProfile(auth.currentUser, {
         photoURL: data.secure_url,
+      });
+
+      // Comprobar si el documento del usuario existe antes de actualizarlo
+      if (!userDoc) {
+        throw new Error("No se encontró el documento del usuario.");
+      }
+
+      // Actualizar la foto de perfil en Firestore
+      await updateDoc(userDoc, {
+        photoURL: data.secure_url,
+        updatedAt: serverTimestamp(),
       });
 
       setUser({
@@ -148,9 +186,30 @@ const SettingsScreen = ({}) => {
     try {
       if (modalTitle === "Nombre") {
         await updateProfile(auth.currentUser, { displayName: fieldValue });
-        showSuccess("¡Listo!", "Nombre actualizado correctamente");
+        // Actualizar información del usuario en Firestore
+        await updateDoc(userDoc, {
+          displayName: fieldValue,
+          updatedAt: serverTimestamp(),
+        });
+
+        setUser({
+          ...user,
+          displayName: fieldValue,
+        });
       } else if (modalTitle === "Correo") {
+        console.log("Actualizando correo a:", fieldValue);
         await updateEmail(auth.currentUser, fieldValue);
+
+        // Actualizar información del usuario en Firestore
+        await updateDoc(userDoc, {
+          email: fieldValue,
+          updatedAt: serverTimestamp(),
+        });
+
+        setUser({
+          ...user,
+          email: fieldValue,
+        });
         showSuccess("¡Listo!", "Correo actualizado correctamente");
       } else if (modalTitle === "Contraseña") {
         await updatePassword(auth.currentUser, fieldValue);
@@ -158,8 +217,48 @@ const SettingsScreen = ({}) => {
       }
     } catch (error) {
       showError("¡Upps!", error.message);
+      console.error("Error al actualizar el campo:", error.message);
     } finally {
       setModalVisible(false);
+    }
+  };
+
+  // METODO PARA SELECCIONAR FECHA DE CUMPLEAÑOS
+  const handleBirthdayEdit = () => {
+    if (userDocData?.birthday) {
+      setBirthdayDate(new Date(userDocData.birthday));
+    }
+
+    setShowDatePicker(true);
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+
+    if (selectedDate) {
+      setBirthdayDate(selectedDate);
+
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+
+      saveBirthday(formattedDate);
+    }
+  };
+
+  const saveBirthday = async (date) => {
+    try {
+      await updateDoc(userDoc, {
+        birthday: date,
+        updatedAt: serverTimestamp(),
+      });
+
+      setUserDocData({
+        ...userDocData,
+        birthday: date,
+      });
+
+      showSuccess("¡Listo!", "Cumpleaños actualizado correctamente");
+    } catch (error) {
+      showError("Error", error.message);
     }
   };
 
@@ -217,6 +316,21 @@ const SettingsScreen = ({}) => {
 
       <View style={styles.row}>
         <View style={styles.info}>
+          <Text style={styles.label}>Cumpleaños</Text>
+          <Text style={styles.infoText}>
+            {userDocData?.birthday || "Agregar fecha"}
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={handleBirthdayEdit}
+        >
+          <IconEdit size={24} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.row}>
+        <View style={styles.info}>
           <Text style={styles.label}>Nueva Contraseña</Text>
           <Text style={styles.infoText}>********</Text>
         </View>
@@ -246,6 +360,16 @@ const SettingsScreen = ({}) => {
           setImageModalVisible(false);
         }}
       />
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={birthdayDate}
+          mode="date"
+          display="default"
+          onValueChange={handleDateChange}
+          onDismiss={() => setShowDatePicker(false)}
+        />
+      )}
     </View>
   );
 };

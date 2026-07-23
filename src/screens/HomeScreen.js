@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, FlatList } from "react-native";
 import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,7 +8,15 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{user?.displayName || "Usuario"}</Text>
+      {/* <Text style={styles.text}>{user?.displayName || "Usuario"}</Text> */}
+      <FlatList
+        data={[
+          { id: "1", text: "Bienvenido a la aplicación" },
+          { id: "2", text: "Aquí puedes ver tus datos y actividades" },
+        ]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Text style={styles.text}>{item.text}</Text>}
+      />
     </View>
   );
 };
@@ -17,8 +25,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 12,
   },
   text: {
     fontSize: 24,
