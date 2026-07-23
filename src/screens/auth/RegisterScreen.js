@@ -8,36 +8,49 @@ import {
   Image,
 } from "react-native";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../services/FireBaseConfig";
 import { auth } from "../../services/FireBaseConfig";
 import colors from "../../constants/colors";
 import { IconMail, IconPassword, IconUser } from "@tabler/icons-react-native";
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
-  const [birthday, setBirthday] = useState("");
   const [photoProfile, setPhotoProfile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [erroMessage, setErrorMessage] = useState("");
 
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password).then(
-      (useCredential) => {
-        const user = useCredential.user;
-        updateProfile(user, {
-          displayName: name,
-        })
-          .then(() => {
-            console.log("Usuario registrado con nombre", user.displayName);
-            navigation.navigate("Login", { screen: "LoginScreen" });
-          })
-          .catch(() => {
-            setError(true);
-            setErrorMessage(error.message);
-          });
-      },
-    );
+  const handleRegister = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: name,
+      });
+
+      // Guardar información adicional del usuario en Firestore
+      const userDoc = doc(db, "users", user.uid);
+      await setDoc(userDoc, {
+        displayName: name,
+        email: email,
+        photoURL: "",
+        partnerId: null,
+        birthday: "",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      navigation.navigate("Login", { screen: "LoginScreen" });
+    } catch (error) {
+      setError(true);
+      setErrorMessage(error.message);
+    }
   };
 
   return (
