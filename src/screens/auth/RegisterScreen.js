@@ -41,7 +41,7 @@ const RegisterScreen = ({ navigation }) => {
         displayName: name,
         email: email,
         photoURL: "",
-        partnerId: null,
+        coupleId: null,
         birthday: "",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),

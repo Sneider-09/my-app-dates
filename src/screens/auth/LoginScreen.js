@@ -25,7 +25,6 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((useCredential) => {
-        console.log("Usuario logueado: ", useCredential.user);
         setError(false);
         setErrorMessage("");
         navigation.replace("MainTabs");
