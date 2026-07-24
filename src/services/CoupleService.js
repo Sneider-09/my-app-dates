@@ -11,7 +11,7 @@ import { db } from "./FireBaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 // Función para obtener un usuario por correo electrónico
-async function getUserByEmail(email) {
+export async function getUserByEmail(email) {
   const userRef = collection(db, "users");
   const q = query(userRef, where("email", "==", email));
   const querySnapshot = await getDocs(q);
