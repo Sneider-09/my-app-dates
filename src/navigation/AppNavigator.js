@@ -11,11 +11,14 @@ import SettingsScreen from "../screens/SettingsScreen";
 import { Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import {
+  IconHeartFilled,
   IconHome,
   IconHomeFilled,
   IconUser,
   IconUserFilled,
+  IconHearts,
 } from "@tabler/icons-react-native";
+import CoupleScreen from "../screens/CoupleScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,6 +60,12 @@ const TabNavigator = () => {
             ) : (
               <IconUser size={size} color={color} />
             );
+          } else if (route.name === "Couple") {
+            return focused ? (
+              <IconHeartFilled size={size} color={color} />
+            ) : (
+              <IconHearts size={size} color={color} />
+            );
           }
           return;
         },
@@ -85,6 +94,14 @@ const TabNavigator = () => {
         options={{
           headerTitle: `Bienvenido a Elytra, ${user?.displayName || ""}`,
           title: "Perfil",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Couple"
+        component={CoupleScreen}
+        options={{
+          headerTitle: "Tu Relación Elytra",
+          title: "Panal",
         }}
       ></Tab.Screen>
     </Tab.Navigator>
@@ -138,6 +155,12 @@ const AppNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{ headerShown: true, title: "Ajustes" }}
+      />
+
+      <Stack.Screen
+        name="Couple"
+        component={SettingsScreen}
+        options={{ headerShown: true, title: "Panal" }}
       />
 
       <Stack.Screen
