@@ -8,12 +8,16 @@ import {
 } from "react-native";
 import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
-import { getRelationShipState } from "../services/CoupleService";
+import {
+  getRelationShipState,
+  getUserByEmail,
+} from "../services/CoupleService";
 import SearchCard from "../components/couple/SearchCard";
+import { ActivityIndicator } from "react-native";
 
 const CoupleScreen = () => {
   const { user } = useAuth();
-  const [relationShip, setrelationShip] = useState(null);
+  const [relationShip, setRelationShip] = useState(null);
 
   useEffect(() => {
     loadRelationShipState();
@@ -22,11 +26,13 @@ const CoupleScreen = () => {
   const loadRelationShipState = async () => {
     const result = await getRelationShipState(user.uid);
     console.log(result);
+    setRelationShip(result);
   };
 
   if (!relationShip) {
     return (
       <View>
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text>Cargando...</Text>
       </View>
     );
@@ -39,6 +45,12 @@ const CoupleScreen = () => {
           currentUser={user}
           onInvitationSent={loadRelationShipState}
         />
+      );
+    default:
+      return (
+        <View>
+          <Text>{relationShip.state}</Text>
+        </View>
       );
   }
 };
