@@ -10,14 +10,13 @@ import {
 
 import colors from "../../constants/colors";
 import { IconUserSearch } from "@tabler/icons-react-native";
-import { getUserByEmail } from "../../services/CoupleService";
-import { showError } from "../../constants/flashMessage";
+import { getUserByEmail, sendInvitation } from "../../services/CoupleService";
+import { showError, showInfo, showSuccess } from "../../constants/flashMessage";
 
 const SearchCard = ({ currentUser, onInvitationSent }) => {
   // Estados
   const [email, setEmail] = useState("");
   const [searchResult, setSearchResult] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   // Funciones
   const handleEmailChange = (text) => {
@@ -29,16 +28,40 @@ const SearchCard = ({ currentUser, onInvitationSent }) => {
   };
 
   const handleSearch = async () => {
-    const result = await getUserByEmail(email);
-    if (!result.success) {
-      showError("Error", result.message);
-      return;
+    try {
+      const result = await getUserByEmail(email);
+      if (!result.success) {
+        showInfo("Ups!", result.message);
+        return;
+      }
+      console.log(result);
+      setSearchResult(result.data);
+    } catch (error) {
+      showError(
+        "Algo salió mal",
+        "No fue posible completar la operación. Inténtalo nuevamente.",
+      );
     }
-    console.log(result);
-    setSearchResult(result.data);
   };
 
-  const handleSendInvitation = async () => {};
+  const handleSendInvitation = async () => {
+    try {
+      //console.log("From User:", currentUser.uid, "To User:", searchResult.uid);
+      const result = await sendInvitation(currentUser, searchResult.email);
+      if (!result.success) {
+        showInfo("Ups!", result.message);
+        return;
+      }
+      //console.log("Enviando Invitación: ", result);
+      showSuccess("¡Listo!", "Tu invitación está en camino");
+      onInvitationSent();
+    } catch (error) {
+      showError(
+        "Algo salió mal",
+        "No fue posible completar la operación. Inténtalo nuevamente.",
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -177,7 +200,20 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: colors.background,
+
+    borderWidth: 3,
+    borderColor: colors.primary,
+
+    backgroundColor: colors.surface,
+
+    shadowColor: colors.secondary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
 
   textContainer: {

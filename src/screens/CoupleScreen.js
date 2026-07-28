@@ -13,6 +13,7 @@ import {
   getUserByEmail,
 } from "../services/CoupleService";
 import SearchCard from "../components/couple/SearchCard";
+import PendingInvitationCard from "../components/couple/PendingInvitationCard";
 import { ActivityIndicator } from "react-native";
 
 const CoupleScreen = () => {
@@ -44,6 +45,14 @@ const CoupleScreen = () => {
         <SearchCard
           currentUser={user}
           onInvitationSent={loadRelationShipState}
+        />
+      );
+    case "pending_sent":
+      return (
+        <PendingInvitationCard
+          partner={relationShip.partner}
+          invitation={relationShip.invitation}
+          onRelationshipUpdated={loadRelationShipState}
         />
       );
     default:
