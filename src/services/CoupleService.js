@@ -180,6 +180,7 @@ async function getInvitationById(invitationId) {
 // Función para actualizar el estado de una invitación
 async function updateInvitationStatus(invitationId, status) {
   const invitationRef = doc(db, "relationship_requests", invitationId);
+  const invitationSnap = await getDoc(invitationRef);
 
   if (!invitationSnap.exists()) {
     return {
@@ -474,6 +475,6 @@ export const getRelationShipState = async (currentUser) => {
   };
 };
 
-export const cancelInvitation = async (invitationID) => {
+export const cancelInvitation = async (invitationId) => {
   return await updateInvitationStatus(invitationId, "cancelled");
 };
