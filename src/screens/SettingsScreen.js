@@ -264,8 +264,6 @@ const SettingsScreen = ({}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Sobre tu Cuenta</Text>
-
       <View style={styles.row}>
         <View style={styles.info}>
           <Text style={styles.label}>Foto de Perfil</Text>
