@@ -478,3 +478,57 @@ export const getRelationShipState = async (currentUser) => {
 export const cancelInvitation = async (invitationId) => {
   return await updateInvitationStatus(invitationId, "cancelled");
 };
+
+export const updateAnniversary = async (coupleId, anniversaryDate) => {
+  const coupleRef = doc(db, "couples", coupleId);
+  const coupleSnap = await getDoc(coupleRef);
+
+  if (!coupleSnap.exists()) {
+    return {
+      success: false,
+      message: "Relación no encontrada.",
+      data: null,
+    };
+  }
+
+  await updateDoc(coupleRef, {
+    anniversary: anniversaryDate,
+    updatedAt: serverTimestamp(),
+  });
+
+  return {
+    success: true,
+    message: "Fecha de aniversario actualizada",
+    data: {
+      coupleId,
+      anniversaryDate,
+    },
+  };
+};
+
+export const updateRelationshipName = async (coupleId, relationshipName) => {
+  const coupleRef = doc(db, "couples", coupleId);
+  const coupleSnap = await getDoc(coupleRef);
+
+  if (!coupleSnap.exists()) {
+    return {
+      success: false,
+      message: "Relación no encontrada.",
+      data: null,
+    };
+  }
+
+  await updateDoc(coupleRef, {
+    relationshipName: relationshipName,
+    updatedAt: serverTimestamp(),
+  });
+
+  return {
+    success: true,
+    message: "Nombre de relación actualizado",
+    data: {
+      coupleId,
+      relationshipName,
+    },
+  };
+};

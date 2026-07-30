@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   StyleSheet,
   View,
@@ -13,16 +14,20 @@ import {
   getUserByEmail,
 } from "../services/CoupleService";
 import SearchCard from "../components/couple/SearchCard";
-import PendingInvitationCard from "../components/couple/PendingInvitationCard";
 import { ActivityIndicator } from "react-native";
+import PendingInvitationCard from "../components/couple/PendingInvitationCard";
+import ReceivedInvitationCard from "../components/couple/ReceivedInvitationCard";
+import CoupleCard from "../components/couple/CoupleCard";
 
 const CoupleScreen = () => {
   const { user } = useAuth();
   const [relationShip, setRelationShip] = useState(null);
 
-  useEffect(() => {
-    loadRelationShipState();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadRelationShipState();
+    }, []),
+  );
 
   const loadRelationShipState = async () => {
     const result = await getRelationShipState(user.uid);
@@ -52,6 +57,22 @@ const CoupleScreen = () => {
         <PendingInvitationCard
           partner={relationShip.partner}
           invitation={relationShip.invitation}
+          onRelationshipUpdated={loadRelationShipState}
+        />
+      );
+    case "pending_received":
+      return (
+        <ReceivedInvitationCard
+          partner={relationShip.partner}
+          invitation={relationShip.invitation}
+          onRelationshipUpdated={loadRelationShipState}
+        />
+      );
+    case "couple":
+      return (
+        <CoupleCard
+          partner={relationShip.partner}
+          couple={relationShip.couple}
           onRelationshipUpdated={loadRelationShipState}
         />
       );

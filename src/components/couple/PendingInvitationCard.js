@@ -26,7 +26,6 @@ const PendingInvitationCard = ({
       console.log(result);
 
       if (!result.success) {
-        console.log("C");
         showInfo("Upss!", result.message);
         return;
       }

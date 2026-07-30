@@ -72,14 +72,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.text_primary,
-    marginBottom: 40,
-    textAlign: "center",
-  },
-
   containerOption: {
     flexDirection: "row",
     width: "100%",
