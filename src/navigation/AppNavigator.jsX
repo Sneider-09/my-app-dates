@@ -1,15 +1,10 @@
 import React from "react";
-import SplashScreen from "../screens/SplashScreen";
-import HomeScreen from "../screens/HomeScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import UserScreen from "../screens/UserScreen";
-import LoginScreen from "../screens/auth/LoginScreen";
-import colors from "../constants/colors";
-import RegisterScreen from "../screens/auth/RegisterScreen";
-import SettingsScreen from "../screens/SettingsScreen";
 import { Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import {
   IconHeartFilled,
   IconHome,
@@ -17,8 +12,19 @@ import {
   IconUser,
   IconUserFilled,
   IconHearts,
+  IconCalendarEvent,
+  IconCalendarEventFilled,
 } from "@tabler/icons-react-native";
+import colors from "../constants/colors";
+
+import SplashScreen from "../screens/SplashScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
+import HomeScreen from "../screens/HomeScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import UserScreen from "../screens/UserScreen";
 import CoupleScreen from "../screens/CoupleScreen";
+import PlanScreen from "../screens/PlanScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -66,6 +72,12 @@ const TabNavigator = () => {
             ) : (
               <IconHearts size={size} color={color} />
             );
+          } else if (route.name === "Plans") {
+            return focused ? (
+              <IconCalendarEventFilled size={size} color={color} />
+            ) : (
+              <IconCalendarEvent size={size} color={color} />
+            );
           }
           return;
         },
@@ -89,11 +101,11 @@ const TabNavigator = () => {
         }}
       ></Tab.Screen>
       <Tab.Screen
-        name="User"
-        component={UserScreen}
+        name="Plans"
+        component={PlanScreen}
         options={{
-          headerTitle: `Bienvenido a Elytra, ${user?.displayName || ""}`,
-          title: "Perfil",
+          headerTitle: "Recolección de Momentos",
+          title: "Agenda",
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -102,6 +114,14 @@ const TabNavigator = () => {
         options={{
           headerTitle: "Tu Relación Elytra",
           title: "Panal",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="User"
+        component={UserScreen}
+        options={{
+          headerTitle: `Bienvenido a Elytra, ${user?.displayName || ""}`,
+          title: "Perfil",
         }}
       ></Tab.Screen>
     </Tab.Navigator>
@@ -155,12 +175,6 @@ const AppNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{ headerShown: true, title: "Ajustes" }}
-      />
-
-      <Stack.Screen
-        name="Couple"
-        component={SettingsScreen}
-        options={{ headerShown: true, title: "Panal" }}
       />
 
       <Stack.Screen
