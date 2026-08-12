@@ -11,6 +11,7 @@ import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
 import PlanCard from "../components/plans/PlanCard";
 import { getPlans } from "../services/PlanService";
+import Fab from "../navigation/Fab";
 
 const PlanScreen = () => {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ const PlanScreen = () => {
     );
   }
 
-  if (plans === null) {
+  if (plans.length === 0) {
     return (
       <View style={styles.container}>
         <Text>Sin Datos</Text>
@@ -57,6 +58,7 @@ const PlanScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PlanCard plan={item} />}
       />
+      <Fab />
     </View>
   );
 };
