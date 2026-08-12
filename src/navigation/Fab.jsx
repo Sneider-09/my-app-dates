@@ -8,14 +8,17 @@ import {
   IconX,
 } from "@tabler/icons-react-native";
 import colors from "../constants/colors";
+import PlanForm from "../components/plans/PlanForm";
 
 export default () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [type, setType] = useState("");
   const options = [
     {
       id: 1,
       icon: IconMap2,
       action: () => {
-        console.log("Opcion 1 presionada");
+        handleOpenModal("place");
       },
       translation: "left",
     },
@@ -23,7 +26,7 @@ export default () => {
       id: 2,
       icon: IconToolsKitchen2,
       action: () => {
-        console.log("Opcion 2 presionada");
+        handleOpenModal("food");
       },
       translation: "middle",
     },
@@ -31,7 +34,7 @@ export default () => {
       id: 3,
       icon: IconPlant,
       action: () => {
-        console.log("Opcion 3 presionada");
+        handleOpenModal("activity");
       },
       translation: "top",
     },
@@ -53,6 +56,37 @@ export default () => {
       friction: toggle ? 4 : 8,
       useNativeDriver: false,
     }).start();
+  };
+
+  const handleOpenModal = (type) => {
+    switch (type) {
+      case "food":
+        setType("food");
+        break;
+
+      case "place":
+        setType("place");
+        break;
+
+      case "activity":
+        setType("");
+        break;
+
+      default:
+        setFieldValue("");
+    }
+    setModalVisible(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      console.log("Guardar");
+    } catch (error) {
+      showError("¡Upps!", error.message);
+      console.error("Error al actualizar el campo:", error.message);
+    } finally {
+      setModalVisible(false);
+    }
   };
 
   const animatedExpanded = {
@@ -145,6 +179,13 @@ export default () => {
 
       <Animated.View
         style={[styles.itemContainer, { zIndex: 0 }, animatedExpanded]}
+      />
+
+      <PlanForm
+        visible={isModalVisible}
+        onSave={handleSave}
+        onCancel={() => setModalVisible(false)}
+        type={type}
       />
     </View>
   );

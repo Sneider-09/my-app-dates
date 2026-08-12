@@ -15,7 +15,6 @@ import Fab from "../navigation/Fab";
 
 const PlanScreen = () => {
   const { user } = useAuth();
-
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
