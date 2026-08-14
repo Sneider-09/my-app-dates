@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,9 +8,42 @@ import {
   ScrollView,
 } from "react-native";
 import colors from "../../constants/colors";
-import { IconHearts } from "@tabler/icons-react-native";
+import {
+  IconCircleCheck,
+  IconCircleCheckFilled,
+  IconHearts,
+  IconSettingsFilled,
+  IconXboxXFilled,
+} from "@tabler/icons-react-native";
+import PlanForm from "./PlanForm";
 
-const PlanCard = ({ plan }) => {
+const PlanCard = ({ plan, onPlanUpdated }) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  //console.log(plan);
+
+  const formatPlanDate = (timestamp) => {
+    if (!timestamp) {
+      return "Sin fecha";
+    }
+
+    const date = timestamp.toDate();
+
+    const dateText = date.toLocaleDateString("es-CO", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+
+    const timeText = date.toLocaleTimeString("es-CO", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    const formattedDate = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+
+    return `${formattedDate} a las ${timeText}`;
+  };
   return (
     <ScrollView
       style={styles.container}
@@ -20,45 +53,59 @@ const PlanCard = ({ plan }) => {
       <View style={styles.card}>
         <View style={styles.rowTitle}>
           <IconHearts size={24} style={styles.icon} />
-          <Text style={styles.cardTitle}>Nombre del Plan</Text>
+          <Text style={styles.cardTitle}>{plan.title}</Text>
         </View>
 
-        <Text style={styles.infoText}>Usuario</Text>
+        <Text style={styles.infoText}>{plan.creatorName}</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>Descripcion</Text>
+          <Text style={styles.label}>{plan.description}</Text>
         </View>
 
         <View style={styles.separator} />
 
         <Text style={styles.label}>Fecha</Text>
         <View style={styles.row}>
-          <Text style={styles.infoText}>11/08/2026</Text>
+          <Text style={styles.infoText}>{formatPlanDate(plan.date)}</Text>
+        </View>
+
+        <Text style={styles.label}>Lugar</Text>
+        <View style={styles.row}>
+          <Text style={styles.infoText}>{plan.location}</Text>
+        </View>
+
+        <View style={styles.separator} />
+
+        <View style={styles.buttons}>
+          <TouchableOpacity onPress={() => console.log("Completar")}>
+            <IconCircleCheckFilled size={30} color={colors.success} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <IconSettingsFilled size={30} color={colors.info} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => console.log("Cancelar")}>
+            <IconXboxXFilled size={30} color={colors.danger} />
+          </TouchableOpacity>
         </View>
       </View>
+
+      <PlanForm
+        visible={isModalVisible}
+        onCancel={() => setModalVisible(false)}
+        type={plan.type}
+        plan={plan}
+        editing={true}
+        onPlanUpdated={onPlanUpdated}
+      />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-
-  rowTitle: {
-    flexDirection: "row",
-    gap: 8,
-  },
-
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    marginHorizontal: 16,
+    marginVertical: 8,
   },
 
   card: {
@@ -107,6 +154,23 @@ const styles = StyleSheet.create({
 
   icon: {
     color: colors.primary,
+  },
+
+  rowTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 10,
   },
 });
 
