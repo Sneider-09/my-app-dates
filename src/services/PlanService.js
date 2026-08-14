@@ -41,6 +41,7 @@ async function createPlan(
   description,
   plannedDate,
   type,
+  location,
   userId,
 ) {
   const plansRef = collection(db, "plans");
@@ -48,8 +49,9 @@ async function createPlan(
     coupleId,
     title,
     description,
-    plannedDate,
+    date: plannedDate,
     type,
+    location,
     completedAt: null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -63,9 +65,9 @@ async function createPlan(
 // Función para obtener un plan por ID
 async function getPlanById(planId) {
   const planRef = doc(db, "plans", planId);
-  const planSanp = await getDoc(planRef);
+  const planSnap = await getDoc(planRef);
 
-  if (!planSanp.exists()) {
+  if (!planSnap.exists()) {
     return {
       success: false,
       message: "Plan no encontrado.",
@@ -77,20 +79,20 @@ async function getPlanById(planId) {
     success: true,
     message: "Plan encontrado.",
     data: {
-      uid: coupleSanp.id,
-      ...coupleSanp.data(),
+      uid: planSnap.id,
+      ...planSnap.data(),
     },
   };
 }
 
 // Función para actualizar un plan
-async function updatePlan(planId, title, description, plannedDate, type) {
+async function updatePlan(planId, title, description, plannedDate, location) {
   const plansRef = doc(db, "plans", planId);
   await updateDoc(plansRef, {
     title,
     description,
-    plannedDate,
-    type,
+    location,
+    date: plannedDate,
     updatedAt: serverTimestamp(),
   });
 
@@ -153,6 +155,7 @@ export const addPlan = async (
   description,
   plannedDate,
   type,
+  location,
   userId,
 ) => {
   const currentUser = await getUserById(userId);
@@ -178,6 +181,7 @@ export const addPlan = async (
     description,
     plannedDate,
     type,
+    location,
     userId,
   );
 
@@ -207,9 +211,37 @@ export const getPlans = async (userId) => {
     };
   }
 
-  const plans = await getPlansByCouple(currentUserData.coupleId);
+  const plansResult = await getPlansByCouple(currentUserData.coupleId);
 
-  return plans;
+  if (!plansResult.success) {
+    return plansResult;
+  }
+
+  const plans = plansResult.data;
+
+  const plansWithCreator = await Promise.all(
+    plans.map(async (plan) => {
+      const creatorResult = await getUserById(plan.createdBy);
+
+      if (!creatorResult.success) {
+        return {
+          ...plan,
+          creatorName: "Usuario desconocido",
+        };
+      }
+
+      return {
+        ...plan,
+        creatorName: creatorResult.data.displayName,
+      };
+    }),
+  );
+
+  return {
+    success: true,
+    message: "Tus planes.",
+    data: plansWithCreator,
+  };
 };
 
 export const updatePlanDetail = async (
@@ -217,7 +249,7 @@ export const updatePlanDetail = async (
   title,
   description,
   plannedDate,
-  type,
+  location,
 ) => {
   const planRef = await getPlanById(planId);
 
@@ -240,7 +272,7 @@ export const updatePlanDetail = async (
     title,
     description,
     plannedDate,
-    type,
+    location,
   );
 
   return result;

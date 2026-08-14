@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+
+import { useFocusEffect } from "@react-navigation/native";
 import {
   StyleSheet,
   View,
@@ -18,19 +20,23 @@ const PlanScreen = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadPlans = async () => {
-      const result = await getPlans(user.uid);
+  const loadPlans = async () => {
+    const result = await getPlans(user.uid);
 
-      if (result.success) {
-        setPlans(result.data);
-      }
+    if (result.success) {
+      setPlans(result.data);
+    } else {
+      setPlans([]);
+    }
 
-      setLoading(false);
-    };
+    setLoading(false);
+  };
 
-    loadPlans();
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      loadPlans();
+    }, []),
+  );
 
   console.log(plans);
 
@@ -55,9 +61,11 @@ const PlanScreen = () => {
       <FlatList
         data={plans}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PlanCard plan={item} />}
+        renderItem={({ item }) => (
+          <PlanCard plan={item} onPlanUpdated={loadPlans} />
+        )}
       />
-      <Fab />
+      <Fab onPlanUpdated={loadPlans} />
     </View>
   );
 };

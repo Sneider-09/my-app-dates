@@ -10,9 +10,9 @@ import {
 import colors from "../constants/colors";
 import PlanForm from "../components/plans/PlanForm";
 
-export default () => {
+export default (plan, onPlanUpdated) => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState("");
+  const [typeButtom, setTypeButtom] = useState("");
   const options = [
     {
       id: 1,
@@ -61,15 +61,15 @@ export default () => {
   const handleOpenModal = (type) => {
     switch (type) {
       case "food":
-        setType("food");
+        setTypeButtom("food");
         break;
 
       case "place":
-        setType("place");
+        setTypeButtom("place");
         break;
 
       case "activity":
-        setType("");
+        setTypeButtom("");
         break;
 
       default:
@@ -183,9 +183,11 @@ export default () => {
 
       <PlanForm
         visible={isModalVisible}
-        onSave={handleSave}
         onCancel={() => setModalVisible(false)}
-        type={type}
+        type={typeButtom}
+        plan={plan}
+        editing={false}
+        onPlanUpdated={onPlanUpdated}
       />
     </View>
   );
