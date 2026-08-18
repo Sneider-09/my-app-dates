@@ -111,6 +111,7 @@ async function updateStatus(planId, status) {
   await updateDoc(planRef, {
     status,
     updatedAt: serverTimestamp(),
+    completedAt: serverTimestamp(),
   });
 
   return {
@@ -125,7 +126,11 @@ async function updateStatus(planId, status) {
 // Función para obtener los planes por relación
 async function getPlansByCouple(coupleId) {
   const plansRef = collection(db, "plans");
-  const q = query(plansRef, where("coupleId", "==", coupleId));
+  const q = query(
+    plansRef,
+    where("coupleId", "==", coupleId),
+    where("status", "==", "pending"),
+  );
   const querySnapshot = await getDocs(q);
 
   if (querySnapshot.empty) {

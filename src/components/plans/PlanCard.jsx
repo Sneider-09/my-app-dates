@@ -16,6 +16,8 @@ import {
   IconXboxXFilled,
 } from "@tabler/icons-react-native";
 import PlanForm from "./PlanForm";
+import { showError, showInfo, showSuccess } from "../../constants/flashMessage";
+import { updateStatusPlan } from "../../services/PlanService";
 
 const PlanCard = ({ plan, onPlanUpdated }) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -43,6 +45,26 @@ const PlanCard = ({ plan, onPlanUpdated }) => {
     const formattedDate = dateText.charAt(0).toUpperCase() + dateText.slice(1);
 
     return `${formattedDate} a las ${timeText}`;
+  };
+
+  const handleUpdateStatus = async (status) => {
+    try {
+      const result = await updateStatusPlan(plan.id, status);
+      if (!result.success) {
+        showInfo("Upss!", result.message);
+        return;
+      }
+      if (status === "completed") {
+        showSuccess("¡Listo!", result.message);
+        return;
+      }
+      if (status === "completed") {
+        showSuccess("¡Listo!", result.message);
+        return;
+      }
+    } catch (error) {
+      showError("Upss!", error.mesage);
+    }
   };
   return (
     <ScrollView
@@ -76,7 +98,7 @@ const PlanCard = ({ plan, onPlanUpdated }) => {
         <View style={styles.separator} />
 
         <View style={styles.buttons}>
-          <TouchableOpacity onPress={() => console.log("Completar")}>
+          <TouchableOpacity onPress={() => handleUpdateStatus("completed")}>
             <IconCircleCheckFilled size={30} color={colors.success} />
           </TouchableOpacity>
 
@@ -84,7 +106,7 @@ const PlanCard = ({ plan, onPlanUpdated }) => {
             <IconSettingsFilled size={30} color={colors.info} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => console.log("Cancelar")}>
+          <TouchableOpacity onPress={() => handleUpdateStatus("cancelled")}>
             <IconXboxXFilled size={30} color={colors.danger} />
           </TouchableOpacity>
         </View>
