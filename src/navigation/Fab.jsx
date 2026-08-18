@@ -78,17 +78,6 @@ export default (plan, onPlanUpdated) => {
     setModalVisible(true);
   };
 
-  const handleSave = async () => {
-    try {
-      console.log("Guardar");
-    } catch (error) {
-      showError("¡Upps!", error.message);
-      console.error("Error al actualizar el campo:", error.message);
-    } finally {
-      setModalVisible(false);
-    }
-  };
-
   const animatedExpanded = {
     transform: [
       {
