@@ -14,6 +14,9 @@ import {
   IconHearts,
   IconSettingsFilled,
   IconXboxXFilled,
+  IconMessageFilled,
+  IconHeart,
+  IconHeartFilled,
 } from "@tabler/icons-react-native";
 import PlanForm from "./PlanForm";
 import { showError, showInfo, showSuccess } from "../../constants/flashMessage";
@@ -21,6 +24,7 @@ import { updateStatusPlan } from "../../services/PlanService";
 
 const PlanCard = ({ plan, onPlanUpdated }) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  let estrellas = 0;
   //console.log(plan);
 
   const formatPlanDate = (timestamp) => {
@@ -72,45 +76,74 @@ const PlanCard = ({ plan, onPlanUpdated }) => {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.card}>
-        <View style={styles.rowTitle}>
-          <IconHearts size={24} style={styles.icon} />
-          <Text style={styles.cardTitle}>{plan.title}</Text>
+      {plan.status === "pending" && (
+        <View style={styles.card}>
+          <View style={styles.rowTitle}>
+            <IconHearts size={24} style={styles.icon} />
+            <Text style={styles.cardTitle}>{plan.title}</Text>
+          </View>
+
+          <Text style={styles.infoText}>{plan.creatorName}</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>{plan.description}</Text>
+          </View>
+
+          <View style={styles.separator} />
+
+          <Text style={styles.label}>Fecha</Text>
+          <View style={styles.row}>
+            <Text style={styles.infoText}>{formatPlanDate(plan.date)}</Text>
+          </View>
+
+          <Text style={styles.label}>Lugar</Text>
+          <View style={styles.row}>
+            <Text style={styles.infoText}>{plan.location}</Text>
+          </View>
+
+          <View style={styles.separator} />
+
+          <View style={styles.buttons}>
+            <TouchableOpacity onPress={() => handleUpdateStatus("completed")}>
+              <IconCircleCheckFilled size={30} color={colors.success} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <IconSettingsFilled size={30} color={colors.info} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handleUpdateStatus("cancelled")}>
+              <IconXboxXFilled size={30} color={colors.danger} />
+            </TouchableOpacity>
+          </View>
         </View>
+      )}
 
-        <Text style={styles.infoText}>{plan.creatorName}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>{plan.description}</Text>
+      {plan.status === "completed" && (
+        <View style={styles.card}>
+          <View style={styles.rowTitle}>
+            <IconHearts size={24} style={styles.icon} />
+            <Text style={styles.cardTitle}>{plan.title}</Text>
+          </View>
+
+          <Text style={styles.label}>Fecha</Text>
+          <View style={styles.row}>
+            <Text style={styles.infoText}>{formatPlanDate(plan.date)}</Text>
+          </View>
+
+          <Text style={styles.label}>Calificacion</Text>
+          <View style={styles.buttons}>
+            {Array.from({ length: 5 }).map((_, index) =>
+              index < estrellas ? (
+                <IconHeartFilled key={index} size={20} style={styles.icon} />
+              ) : (
+                <IconHeart key={index} size={20} style={styles.icon} />
+              ),
+            )}
+          </View>
+
+          <View style={styles.separator} />
         </View>
-
-        <View style={styles.separator} />
-
-        <Text style={styles.label}>Fecha</Text>
-        <View style={styles.row}>
-          <Text style={styles.infoText}>{formatPlanDate(plan.date)}</Text>
-        </View>
-
-        <Text style={styles.label}>Lugar</Text>
-        <View style={styles.row}>
-          <Text style={styles.infoText}>{plan.location}</Text>
-        </View>
-
-        <View style={styles.separator} />
-
-        <View style={styles.buttons}>
-          <TouchableOpacity onPress={() => handleUpdateStatus("completed")}>
-            <IconCircleCheckFilled size={30} color={colors.success} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <IconSettingsFilled size={30} color={colors.info} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => handleUpdateStatus("cancelled")}>
-            <IconXboxXFilled size={30} color={colors.danger} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      )}
 
       <PlanForm
         visible={isModalVisible}
