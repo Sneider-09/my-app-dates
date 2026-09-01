@@ -21,7 +21,7 @@ const PlanScreen = () => {
   const [loading, setLoading] = useState(true);
 
   const loadPlans = async () => {
-    const result = await getPlans(user.uid);
+    const result = await getPlans(user.uid, "pending");
 
     if (result.success) {
       setPlans(result.data);
@@ -38,7 +38,7 @@ const PlanScreen = () => {
     }, []),
   );
 
-  console.log(plans);
+  //console.log(plans);
 
   if (loading) {
     return (

@@ -124,12 +124,12 @@ async function updateStatus(planId, status) {
 }
 
 // Función para obtener los planes por relación
-async function getPlansByCouple(coupleId) {
+async function getPlansByCouple(coupleId, status) {
   const plansRef = collection(db, "plans");
   const q = query(
     plansRef,
     where("coupleId", "==", coupleId),
-    where("status", "==", "pending"),
+    where("status", "==", status),
   );
   const querySnapshot = await getDocs(q);
 
@@ -199,7 +199,7 @@ export const addPlan = async (
   };
 };
 
-export const getPlans = async (userId) => {
+export const getPlans = async (userId, status) => {
   const currentUser = await getUserById(userId);
 
   if (!currentUser.success) {
@@ -216,7 +216,7 @@ export const getPlans = async (userId) => {
     };
   }
 
-  const plansResult = await getPlansByCouple(currentUserData.coupleId);
+  const plansResult = await getPlansByCouple(currentUserData.coupleId, status);
 
   if (!plansResult.success) {
     return plansResult;
