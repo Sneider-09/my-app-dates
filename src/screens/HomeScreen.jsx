@@ -6,13 +6,14 @@ import {
   Text,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
 import PlanCard from "../components/plans/PlanCard";
 import { getPlans } from "../services/PlanService";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const { user } = useAuth();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +60,11 @@ const HomeScreen = () => {
         data={plans}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <PlanCard plan={item} onPlanUpdated={loadPlans} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Details", { plan: item })}
+          >
+            <PlanCard plan={item} onPlanUpdated={loadPlans} />
+          </TouchableOpacity>
         )}
       />
     </View>

@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Image,
   ScrollView,
@@ -16,8 +15,6 @@ import {
   IconUserHeart,
 } from "@tabler/icons-react-native";
 import {
-  getUserByEmail,
-  sendInvitation,
   updateAnniversary,
   updateRelationshipName,
 } from "../../services/CoupleService";

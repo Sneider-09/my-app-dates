@@ -25,6 +25,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 import UserScreen from "../screens/UserScreen";
 import CoupleScreen from "../screens/CoupleScreen";
 import PlanScreen from "../screens/PlanScreen";
+import PlanDetailScreen from "../screens/PlanDetailScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -175,6 +176,12 @@ const AppNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{ headerShown: true, title: "Ajustes" }}
+      />
+
+      <Stack.Screen
+        name="Details"
+        component={PlanDetailScreen}
+        options={{ headerShown: true, title: "Resumen" }}
       />
 
       <Stack.Screen

@@ -532,3 +532,42 @@ export const updateRelationshipName = async (coupleId, relationshipName) => {
     },
   };
 };
+
+export const getCoupleData = async (coupleId) => {
+  const coupleResult = await getCoupleById(coupleId);
+
+  if (!coupleResult.success) {
+    return coupleResult;
+  }
+
+  const coupleData = coupleResult.data;
+
+  const members = await Promise.all(
+    coupleData.members.map(async (memberId) => {
+      const memberResult = await getUserById(memberId);
+
+      if (!memberResult.success) {
+        return null;
+      }
+
+      return memberResult.data;
+    }),
+  );
+
+  if (members.includes(null)) {
+    return {
+      success: false,
+      message: "No se pudo obtener la información de todos los miembros.",
+      data: null,
+    };
+  }
+
+  return {
+    success: true,
+    message: "Información de la pareja obtenida.",
+    data: {
+      couple: coupleData,
+      members,
+    },
+  };
+};
