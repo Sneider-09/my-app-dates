@@ -9,12 +9,10 @@ import {
 } from "react-native";
 import colors from "../../constants/colors";
 import {
-  IconCircleCheck,
   IconCircleCheckFilled,
   IconHearts,
   IconSettingsFilled,
   IconXboxXFilled,
-  IconMessageFilled,
   IconHeart,
   IconHeartFilled,
 } from "@tabler/icons-react-native";

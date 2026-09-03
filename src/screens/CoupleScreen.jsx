@@ -1,18 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import colors from "../constants/colors";
 import { useAuth } from "../context/AuthContext";
-import {
-  getRelationShipState,
-  getUserByEmail,
-} from "../services/CoupleService";
+import { getRelationShipState } from "../services/CoupleService";
 import SearchCard from "../components/couple/SearchCard";
 import { ActivityIndicator } from "react-native";
 import PendingInvitationCard from "../components/couple/PendingInvitationCard";
